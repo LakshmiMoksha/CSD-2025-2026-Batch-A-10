@@ -1,0 +1,12 @@
+Flask
+Flask-Mail
+pandas
+numpy
+scikit-learn
+xgboost
+joblib
+fpdf
+ollama
+gunicorn
+python-dotenv
+google-generativeai

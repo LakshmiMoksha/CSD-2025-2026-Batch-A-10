@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Forensic Audit - CyberDetect AI</title>
+    <link rel="icon" href="data:,">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .forensic-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .table-glass {
+            color: var(--text-color);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .table-glass th {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+        }
+
+        .table-glass td {
+            border-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .filter-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 10px;
+            padding: 8px 15px;
+        }
+
+        .filter-input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+        }
+
+        .filter-input option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        .severity-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-critical {
+            background: #ef4444;
+            color: white;
+        }
+
+        .badge-high {
+            background: #f97316;
+            color: white;
+        }
+
+        .badge-medium {
+            background: #eab308;
+            color: black;
+        }
+
+        .badge-low {
+            background: #22c55e;
+            color: white;
+        }
+
+        .export-btn {
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark px-4 px-lg-5 py-3 py-lg-0 sticky-top">
+        <a href="{{url_for('index')}}" class="navbar-brand p-0">
+            <h1>CyberDetect AI</h1>
+        </a>
+        <div class="navbar-collapse collapse">
+            <div class="navbar-nav ms-auto">
+                <a href="{{url_for('viewdata')}}" class="nav-item nav-link">VIEWDATA</a>
+                <a href="{{url_for('algo')}}" class="nav-item nav-link">ALGO</a>
+                <a href="{{url_for('upload')}}" class="nav-item nav-link">UPLOAD</a>
+                <a href="{{url_for('prediction')}}" class="nav-item nav-link">PREDICTION</a>
+                <a href="{{url_for('dashboard')}}" class="nav-item nav-link">DASHBOARD</a>
+                <a href="{{url_for('forensics')}}" class="nav-item nav-link active">FORENSICS</a>
+                <a href="{{url_for('logout')}}" class="nav-item nav-link">LOGOUT</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-5 px-lg-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="forensic-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="mb-1 text-white fw-bold">Forensic Security Audit</h2>
+                            <p class="text-white opacity-75">Analyze and audit historical network attack data</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button onclick="clearLogs()" class="btn btn-outline-warning export-btn">
+                                <i class="fas fa-trash-alt me-2"></i>Clear Forensic History
+                            </button>
+                            <a href="/export/csv" class="btn btn-outline-success export-btn">
+                                <i class="fas fa-file-csv me-2"></i>Export CSV
+                            </a>
+                            <a href="/export/pdf" class="btn btn-outline-danger export-btn">
+                                <i class="fas fa-file-pdf me-2"></i>Export PDF
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="row g-3 mb-4 p-3 rounded" style="background: rgba(255,255,255,0.03);">
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Attack Type</label>
+                            <select id="filterAttack" class="form-select filter-input">
+                                <option value="">All Types</option>
+                                <option value="Blackhole">Blackhole</option>
+                                <option value="Grayhole">Grayhole</option>
+                                <option value="tdma">TDMA</option>
+                                <option value="Flooding">Flooding</option>
+                                <option value="normal">Normal</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Severity</label>
+                            <select id="filterSeverity" class="form-select filter-input">
+                                <option value="">All Severities</option>
+                                <option value="Critical">Critical</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">Detected Since</label>
+                            <input type="date" id="filterDate" class="form-control filter-input">
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button onclick="loadLogs()" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-2"></i>Apply Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-glass">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Attack Type</th>
+                                    <th>Node ID</th>
+                                    <th>Severity</th>
+                                    <th>Mitigation Action</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody">
+                                <!-- Data loaded via AJAX -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="forensic-card">
+                    <h5 class="text-white fw-bold"><i class="fas fa-chart-line me-2 text-info"></i>Attack Frequency
+                        Trends</h5>
+                    <div style="height: 300px;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="forensic-card">
+                    <h5 class="text-white fw-bold"><i class="fas fa-shield-alt me-2 text-info"></i>Node Risk Summary
+                    </h5>
+                    <p class="small text-white opacity-75 mb-4">Historical risk distribution per node</p>
+                    <div style="height: 250px;">
+                        <canvas id="riskChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-auto">
+        <div class="container text-center">
+            <p class="footer-text">© 2026 <span class="footer-highlight">A10</span>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script>
+        let trendChart, riskChart;
+
+        async function loadLogs() {
+            const attack = document.getElementById('filterAttack').value;
+            const severity = document.getElementById('filterSeverity').value;
+            const date = document.getElementById('filterDate').value;
+
+            const url = `/api/forensic_logs?attack_type=${attack}&severity=${severity}&date_from=${date}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                const tbody = document.getElementById('logsTableBody');
+                tbody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5 text-muted">No forensic records found for this criteria.</td></tr>';
+                    return;
+                }
+
+                data.forEach(log => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="small">${log.timestamp}</td>
+                        <td><span class="fw-bold">${log.attack_type.toUpperCase()}</span></td>
+                        <td><code>${log.node_id}</code></td>
+                        <td><span class="severity-badge badge-${log.severity.toLowerCase()}">${log.severity}</span></td>
+                        <td class="small">${log.mitigation}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="alert('Details: ${log.details}')">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                updateCharts(data);
+            } catch (error) {
+                console.error("Forensic Load Error:", error);
+            }
+        }
+
+        function updateCharts(logs) {
+            // Process data for trend chart (by date)
+            const dateCounts = {};
+            const severityCounts = { Critical: 0, High: 0, Medium: 0, Low: 0 };
+
+            logs.forEach(log => {
+                const day = log.timestamp.split(' ')[0];
+                dateCounts[day] = (dateCounts[day] || 0) + 1;
+
+                // Capitalize for matching (Critical, High, etc)
+                const sev = log.severity.charAt(0).toUpperCase() + log.severity.slice(1);
+                if (severityCounts[sev] !== undefined) {
+                    severityCounts[sev]++;
+                } else if (log.severity !== "Unknown") {
+                    // Fallback for misaligned data
+                    severityCounts["Medium"]++;
+                }
+            });
+
+            const dateLabels = Object.keys(dateCounts).sort();
+            const dateValues = dateLabels.map(d => dateCounts[d]);
+
+            // Trend Chart
+            if (trendChart) trendChart.destroy();
+            const ctxT = document.getElementById('trendChart').getContext('2d');
+            trendChart = new Chart(ctxT, {
+                type: 'line',
+                data: {
+                    labels: dateLabels,
+                    datasets: [{
+                        label: 'Incidents Detected',
+                        data: dateValues,
+                        borderColor: '#a855f7',
+                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: 'white' } },
+                        x: { ticks: { color: 'white' } }
+                    },
+                    plugins: { legend: { labels: { color: 'white' } } }
+                }
+            });
+
+            // Risk Chart
+            if (riskChart) riskChart.destroy();
+            const ctxR = document.getElementById('riskChart').getContext('2d');
+            riskChart = new Chart(ctxR, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(severityCounts),
+                    datasets: [{
+                        data: Object.values(severityCounts),
+                        backgroundColor: ['#ef4444', '#f97316', '#eab308', '#22c55e'],
+                        borderColor: 'transparent'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom', labels: { color: 'white' } } }
+                }
+            });
+        }
+
+        async function clearLogs() {
+            if (!confirm("Are you sure you want to PERMANENTLY delete all forensic records? This will clear all charts.")) return;
+
+            try {
+                const response = await fetch('/api/clear_forensics', { method: 'POST' });
+                const data = await response.json();
+                if (data.status === 'success') {
+                    alert(data.message);
+                    loadLogs();
+                }
+            } catch (error) {
+                alert("Error clearing logs");
+            }
+        }
+
+        document.ready = loadLogs();
+    </script>
+    {% include 'chatbot_fragment.html' %}
+</body>
+
+</html>

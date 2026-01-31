@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.current_dataset
+uploads/*
+!uploads/.gitkeep
+cyber.db
+.ipynb_checkpoints/
+# *.pkl (Removed to ensure models are deployed)
+# Large datasets if they are too big for git
+# WSN-DS.csv

@@ -1,0 +1,273 @@
+<style>
+    #a10-bot-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1050;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    #a10-bot-toggle {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 5px 25px rgba(168, 85, 247, 0.4);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+    }
+
+    #a10-bot-toggle:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 35px rgba(168, 85, 247, 0.6);
+    }
+
+    #a10-bot-window {
+        width: 380px;
+        height: 500px;
+        background: var(--card-bg);
+        backdrop-filter: blur(25px);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .a10-bot-header {
+        background: linear-gradient(to right, rgba(168, 85, 247, 0.3), rgba(59, 130, 246, 0.3));
+        padding: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .a10-bot-header h5 {
+        margin: 0;
+        color: white;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    #a10-bot-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .message {
+        max-width: 80%;
+        padding: 12px 16px;
+        border-radius: 15px;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        /* Preserves newlines and spaces */
+    }
+
+    .bot-message {
+        align-self: flex-start;
+        background: rgba(255, 255, 255, 0.05);
+        color: #e9d5ff;
+        border-bottom-left-radius: 2px;
+    }
+
+    .user-message {
+        align-self: flex-end;
+        background: var(--primary);
+        color: white;
+        border-bottom-right-radius: 2px;
+    }
+
+    .a10-bot-input-area {
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        gap: 10px;
+    }
+
+    #a10-bot-input {
+        flex: 1;
+        background: rgba(12, 4, 34, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 8px 15px;
+        color: white;
+        outline: none;
+    }
+
+    #a10-bot-send {
+        background: none;
+        border: none;
+        color: var(--primary);
+        font-size: 20px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    #a10-bot-send:hover {
+        transform: scale(1.2);
+    }
+</style>
+
+<div id="a10-bot-widget">
+    <div id="a10-bot-window" class="animate__animated">
+        <div class="a10-bot-header">
+            <h5>A10 BOT</h5>
+            <button onclick="toggleA10Bot()" class="btn-close btn-close-white" style="font-size: 10px;"></button>
+        </div>
+        <div id="a10-bot-messages">
+            <div class="message bot-message">Hello! I am A10 Bot, your WSN security expert. How can I help you today?
+            </div>
+        </div>
+        <div class="a10-bot-input-area">
+            <input type="text" id="a10-bot-input" placeholder="Ask about the project...">
+            <button id="a10-bot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <button id="a10-bot-toggle" onclick="toggleA10Bot()">
+        <i class="fas fa-robot fa-lg"></i>
+    </button>
+</div>
+
+<script>
+    function toggleA10Bot() {
+        const window = document.getElementById('a10-bot-window');
+        if (window.style.display === 'none' || window.style.display === '') {
+            // Opening
+            window.style.display = 'flex';
+            window.classList.remove('animate__fadeOutDown');
+            window.classList.add('animate__fadeInUp');
+        } else {
+            // Closing
+            window.classList.remove('animate__fadeInUp');
+            window.classList.add('animate__fadeOutDown');
+            setTimeout(() => {
+                window.style.display = 'none';
+
+                // Refresh Chat History (User Request)
+                const container = document.getElementById('a10-bot-messages');
+                container.innerHTML = `<div class="message bot-message">Hello! I am A10 Bot, your WSN security expert. How can I help you today?</div>`;
+            }, 500);
+        }
+    }
+
+    document.getElementById('a10-bot-send').addEventListener('click', sendMessage);
+    document.getElementById('a10-bot-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+
+    async function sendMessage() {
+        const input = document.getElementById('a10-bot-input');
+        const message = input.value.trim();
+        if (!message) return;
+
+        appendMessage('user', message);
+        input.value = '';
+
+        const botMsgDiv = appendMessage('bot', '');
+        botMsgDiv.textContent = '...';
+
+        try {
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+
+            if (!response.ok) {
+                botMsgDiv.textContent = "Server Error. Please refresh and try again.";
+                return;
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            botMsgDiv.textContent = ''; // Clear the typing indicator
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                botMsgDiv.textContent += chunk;
+
+                // Auto-scroll as text appears
+                const container = document.getElementById('a10-bot-messages');
+                container.scrollTop = container.scrollHeight;
+            }
+        } catch (error) {
+            console.error("Chatbot Error:", error);
+            botMsgDiv.textContent = "Connection failed. Please ensure Ollama is running.";
+        }
+    }
+
+    function appendMessage(sender, text) {
+        const container = document.getElementById('a10-bot-messages');
+        const div = document.createElement('div');
+        div.className = `message ${sender}-message`;
+        div.textContent = text;
+        container.appendChild(div);
+        container.scrollTop = container.scrollHeight;
+        return div;
+    }
+
+    // Theme Toggle Logic
+    const themeToggle = document.createElement('button');
+    themeToggle.id = 'theme-toggle';
+    themeToggle.className = 'btn btn-link nav-link p-0 ms-lg-3';
+    themeToggle.style = 'border: none; outline: none; display: flex; align-items: center; justify-content: center;';
+    themeToggle.innerHTML = '<i class="fas fa-moon fa-lg" id="theme-icon" style="color: var(--text-color);"></i>';
+
+    // Inject into navbar once DOM is loaded
+    function injectThemeToggle() {
+        const navNav = document.querySelector('.navbar-nav');
+        if (navNav && !document.getElementById('theme-toggle')) {
+            navNav.appendChild(themeToggle);
+        }
+    }
+
+    // Load saved theme immediately to prevent flashing
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        injectThemeToggle();
+        updateThemeIcon(savedTheme);
+    });
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+
+    function updateThemeIcon(theme) {
+        const icon = document.getElementById('theme-icon');
+        if (!icon) return;
+        if (theme === 'light') {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+            icon.style.color = '#f59e0b';
+        } else {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+            icon.style.color = 'var(--text-color)';
+        }
+    }
+</script>
