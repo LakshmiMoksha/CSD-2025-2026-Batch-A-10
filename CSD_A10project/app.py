@@ -361,29 +361,33 @@ def clear_forensics():
 
 @app.route('/api/forensic_logs')
 def get_forensic_logs():
-    attack_type = request.args.get('attack_type')
-    severity = request.args.get('severity')
-    date_from = request.args.get('date_from')
-    
-    query = "SELECT * FROM forensic_logs WHERE 1=1"
-    params = []
-    
-    if attack_type:
-        query += " AND attack_type = ?"
-        params.append(attack_type)
-    if severity:
-        query += " AND severity = ?"
-        params.append(severity)
-    if date_from:
-        query += " AND date(timestamp) >= ?"
-        params.append(date_from)
+    try:
+        attack_type = request.args.get('attack_type')
+        severity = request.args.get('severity')
+        date_from = request.args.get('date_from')
         
-    query += " ORDER BY timestamp DESC"
-    
-    conn = get_db_connection()
-    logs = conn.execute(query, params).fetchall()
-    conn.close()
-    return jsonify([dict(row) for row in logs])
+        query = "SELECT * FROM forensic_logs WHERE 1=1"
+        params = []
+        
+        if attack_type:
+            query += " AND attack_type = ?"
+            params.append(attack_type)
+        if severity:
+            query += " AND severity = ?"
+            params.append(severity)
+        if date_from:
+            query += " AND date(timestamp) >= ?"
+            params.append(date_from)
+            
+        query += " ORDER BY timestamp DESC"
+        
+        conn = get_db_connection()
+        logs = conn.execute(query, params).fetchall()
+        conn.close()
+        return jsonify([dict(row) for row in logs])
+    except Exception as e:
+        print(f"[ERROR] Forensic logs query failed: {e}")
+        return jsonify([])  # Return empty array instead of crashing
 
 
 
