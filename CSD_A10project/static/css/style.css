@@ -132,7 +132,7 @@ select:-webkit-autofill:focus {
     text-shadow: 0 0 30px rgba(168, 85, 247, 0.8);
 }
 
-.navbar-dark .navbar-nav .nav-link {
+.navbar .navbar-nav .nav-link {
     font-family: 'Rajdhani', sans-serif;
     color: var(--text-color) !important;
     opacity: 0.85;
@@ -147,8 +147,8 @@ select:-webkit-autofill:focus {
     overflow: hidden;
 }
 
-.navbar-dark .navbar-nav .nav-link:hover,
-.navbar-dark .navbar-nav .nav-link.active {
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active {
     color: var(--primary) !important;
     opacity: 1;
     text-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
@@ -205,7 +205,8 @@ select:-webkit-autofill:focus {
 
 .hero-subtext {
     font-size: 1.15rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-color);
+    opacity: 0.8;
     line-height: 1.6;
     margin-bottom: 2.5rem;
     max-width: 600px;
@@ -449,21 +450,20 @@ select:-webkit-autofill:focus {
     position: relative;
     margin-right: 25px;
     padding: 35px 0;
-    color: var(--bs-white);
+    color: var(--text-color);
     font-size: 17px;
     font-weight: 400;
     outline: none;
     transition: .5s;
 }
 
-.sticky-top.navbar-light .navbar-nav .nav-link {
+.sticky-top .navbar-nav .nav-link {
     padding: 20px 0;
-    color: var(--bs-dark);
 }
 
-.navbar-light .navbar-nav .nav-link:hover,
-.navbar-light .navbar-nav .nav-link.active {
-    color: var(--bs-primary);
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active {
+    color: var(--primary);
 }
 
 .navbar-light .navbar-brand img {
@@ -514,11 +514,11 @@ select:-webkit-autofill:focus {
         border-top: 1px solid rgba(0, 0, 0, .08);
     }
 
-    .navbar-light .navbar-nav .nav-link,
-    .sticky-top.navbar-light .navbar-nav .nav-link {
+    .navbar .navbar-nav .nav-link,
+    .sticky-top .navbar-nav .nav-link {
         padding: 10px 0;
         margin-left: 0;
-        color: var(--bs-dark);
+        color: var(--text-color);
     }
 
     .navbar-light .navbar-brand img {
