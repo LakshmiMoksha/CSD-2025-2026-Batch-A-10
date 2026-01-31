@@ -395,8 +395,9 @@
 
                         // Update Traffic
                         if (data.analytics.traffic_intensity) {
+                            trafficChart.data.labels = data.analytics.traffic_intensity.map(() => '');
                             trafficChart.data.datasets[0].data = data.analytics.traffic_intensity;
-                            trafficChart.update();
+                            trafficChart.update('none'); // Update without animation for smoothness
                         }
 
                         // Update Recent Detection
