@@ -40,7 +40,7 @@
         display: none;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
     }
 
     .a10-bot-header {
@@ -80,8 +80,9 @@
 
     .bot-message {
         align-self: flex-start;
-        background: rgba(255, 255, 255, 0.05);
-        color: #e9d5ff;
+        background: var(--glass-bg);
+        color: var(--text-color);
+        border: 1px solid var(--glass-border);
         border-bottom-left-radius: 2px;
     }
 
@@ -102,11 +103,11 @@
 
     #a10-bot-input {
         flex: 1;
-        background: rgba(12, 4, 34, 1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--input-bg);
+        border: 1px solid var(--glass-border);
         border-radius: 10px;
         padding: 8px 15px;
-        color: white;
+        color: var(--text-color);
         outline: none;
     }
 

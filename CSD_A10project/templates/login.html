@@ -72,45 +72,45 @@
             <div class="row justify-content-center">
                 <div class="col-lg-6 animate__animated animate__zoomIn">
                     <div class="form-container">
-                        <div class="text-center mb-5">
-                            <h4 class="text-primary text-uppercase">Login</h4>
-                            <h2 class="text-color" style="color: var(--text-color);">Welcome Back</h2>
-                            {% if msg %}
-                            <div class="alert alert-info mt-3"
-                                style="background: rgba(168, 85, 247, 0.1); border-color: var(--primary); color: var(--text-color);">
-                                {{msg}}
-                            </div>
-                            {% endif %}
+                        <h4 class="text-primary text-uppercase">Login</h4>
+                        <h2 class="theme-text" style="font-family: 'Outfit', sans-serif; font-weight: 800;">Welcome Back
+                        </h2>
+                        {% if msg %}
+                        <div class="alert alert-info mt-3"
+                            style="background: var(--glass-bg); border-color: var(--primary); color: var(--text-color);">
+                            {{msg}}
                         </div>
+                        {% endif %}
+                    </div>
 
-                        <form action="{{url_for('login')}}" method="post">
-                            <div class="row g-4">
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Your Email" required>
-                                        <label for="email">Your Email</label>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="password" class="form-control" id="password" name="password"
-                                            placeholder="Password" required>
-                                        <label for="password">Password</label>
-                                    </div>
-                                </div>
-                                <div class="col-12 text-center mt-5">
-                                    <button class="btn btn-primary w-100 py-3" type="submit">SIGN IN</button>
-                                    <p class="mt-4 text-muted">Don't have an account? <a
-                                            href="{{url_for('registration')}}" class="text-primary">Register here</a>
-                                    </p>
+                    <form action="{{url_for('login')}}" method="post">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        placeholder="Your Email" required>
+                                    <label for="email">Your Email</label>
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="Password" required>
+                                    <label for="password">Password</label>
+                                </div>
+                            </div>
+                            <div class="col-12 text-center mt-5">
+                                <button class="btn btn-primary w-100 py-3" type="submit">SIGN IN</button>
+                                <p class="mt-4 text-muted">Don't have an account? <a href="{{url_for('registration')}}"
+                                        class="text-primary">Register here</a>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <!-- Login End -->
     <a href="#" class="btn btn-secondary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>

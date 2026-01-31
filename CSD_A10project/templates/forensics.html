@@ -30,7 +30,7 @@
 
         .table-glass th {
             background: var(--primary);
-            color: white;
+            color: #ffffff;
             border: none;
             padding: 15px;
         }
@@ -42,9 +42,9 @@
         }
 
         .filter-input {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--input-bg);
             border: 1px solid var(--glass-border);
-            color: white;
+            color: var(--text-color);
             border-radius: 10px;
             padding: 8px 15px;
         }
@@ -57,8 +57,8 @@
         }
 
         .filter-input option {
-            background: #1a1a2e;
-            color: white;
+            background: var(--bg-color);
+            color: var(--text-color);
         }
 
         .severity-badge {
@@ -125,8 +125,9 @@
                 <div class="forensic-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div>
-                            <h2 class="mb-1 text-white fw-bold">Forensic Security Audit</h2>
-                            <p class="text-white opacity-75">Analyze and audit historical network attack data</p>
+                            <h2 class="mb-1 fw-bold" style="color: var(--text-color);">Forensic Security Audit</h2>
+                            <p style="color: var(--text-color); opacity: 0.75;">Analyze and audit historical network
+                                attack data</p>
                         </div>
                         <div class="d-flex gap-2">
                             <button onclick="clearLogs()" class="btn btn-outline-warning export-btn">
@@ -142,7 +143,7 @@
                     </div>
 
                     <!-- Filters -->
-                    <div class="row g-3 mb-4 p-3 rounded" style="background: rgba(255,255,255,0.03);">
+                    <div class="row g-3 mb-4 p-3 rounded" style="background: var(--glass-bg);">
                         <div class="col-md-3">
                             <label class="form-label small text-muted">Attack Type</label>
                             <select id="filterAttack" class="form-select filter-input">
@@ -199,8 +200,8 @@
         <div class="row">
             <div class="col-lg-8">
                 <div class="forensic-card">
-                    <h5 class="text-white fw-bold"><i class="fas fa-chart-line me-2 text-info"></i>Attack Frequency
-                        Trends</h5>
+                    <h5 class="fw-bold" style="color: var(--text-color);"><i
+                            class="fas fa-chart-line me-2 text-info"></i>Attack Frequency Trends</h5>
                     <div style="height: 300px;">
                         <canvas id="trendChart"></canvas>
                     </div>
@@ -208,9 +209,10 @@
             </div>
             <div class="col-lg-4">
                 <div class="forensic-card">
-                    <h5 class="text-white fw-bold"><i class="fas fa-shield-alt me-2 text-info"></i>Node Risk Summary
-                    </h5>
-                    <p class="small text-white opacity-75 mb-4">Historical risk distribution per node</p>
+                    <h5 class="fw-bold" style="color: var(--text-color);"><i
+                            class="fas fa-shield-alt me-2 text-info"></i>Node Risk Summary</h5>
+                    <p class="small mb-4" style="color: var(--text-color); opacity: 0.75;">Historical risk distribution
+                        per node</p>
                     <div style="height: 250px;">
                         <canvas id="riskChart"></canvas>
                     </div>
@@ -228,6 +230,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script>
+        const isLight = document.documentElement.getAttribute('data-theme') === 'light';
         let trendChart, riskChart;
 
         async function loadLogs() {
@@ -314,10 +317,17 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: { beginAtZero: true, ticks: { color: 'white' } },
-                        x: { ticks: { color: 'white' } }
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: isLight ? '#1a0b2e' : 'white' },
+                            grid: { color: isLight ? 'rgba(0,0,0,0.05)' : 'rgba(255, 255, 255, 0.05)' }
+                        },
+                        x: {
+                            ticks: { color: isLight ? '#1a0b2e' : 'white' },
+                            grid: { display: false }
+                        }
                     },
-                    plugins: { legend: { labels: { color: 'white' } } }
+                    plugins: { legend: { labels: { color: isLight ? '#1a0b2e' : 'white' } } }
                 }
             });
 
@@ -336,7 +346,7 @@
                 },
                 options: {
                     responsive: true,
-                    plugins: { legend: { position: 'bottom', labels: { color: 'white' } } }
+                    plugins: { legend: { position: 'bottom', labels: { color: isLight ? '#1a0b2e' : 'white' } } }
                 }
             });
         }
