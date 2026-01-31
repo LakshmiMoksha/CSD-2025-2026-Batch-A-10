@@ -99,11 +99,41 @@ def get_placeholder_response(message):
         )
 
     return (
-        "I am currently operating in expert-knowledge mode. "
-        "I can explain the WSN-DS dataset, analyze network patterns, "
-        "and suggest mitigation for Grayhole, Blackhole, Flooding, and TDMA attacks. "
-        "Please use the 'Upload' menu to process a CSV file for deep detection."
+        "I am currently operating in limited connectivity mode. "
+        "I can help you analyze the WSN-DS dataset, detect network attacks, "
+        "and generate forensic reports. Your demo account is: **224g1a3246@srit.ac.in**. "
+        "Please use the 'Upload' menu to begin your analysis."
     )
+
+def call_gemini_safely(prompt, system_context=""):
+    if not gemini_key:
+        return None
+    try:
+        model_name = get_best_model()
+        model = genai.GenerativeModel(model_name)
+        full_prompt = f"{system_context}\n\n{prompt}" if system_context else prompt
+        
+        # Call Gemini
+        response = model.generate_content(full_prompt, safety_settings=SAFETY_SETTINGS)
+        
+        # Rigorous check for candidates and text
+        if response and hasattr(response, 'candidates') and len(response.candidates) > 0:
+            candidate = response.candidates[0]
+            # Check for safety filter block (finish_reason 3)
+            if candidate.finish_reason == 3:
+                return f"[Policy Filter Active] {get_placeholder_response(prompt)}"
+            
+            # Try to get text safely
+            try:
+                if response.text:
+                    return response.text
+            except:
+                pass
+        
+        return None
+    except Exception as e:
+        print(f"[Gemini Safety Handler] Caught: {e}")
+        return None
 
 # Increase timeout for slower systems
 client = Client(host='http://localhost:11434', timeout=60)
@@ -172,15 +202,9 @@ def get_attack_prevention(attack_type):
     
     # Try Gemini first if key exists
     if gemini_key:
-        try:
-            model_name = get_best_model()
-            model = genai.GenerativeModel(model_name)
-            full_prompt = f"{system_prompt}\n\n{user_prompt}"
-            response = model.generate_content(full_prompt, safety_settings=SAFETY_SETTINGS)
-            if response and response.text:
-                return response.text
-        except Exception as e:
-            print(f"Gemini API Error (get_attack_prevention): {str(e)}")
+        res = call_gemini_safely(user_prompt, system_prompt)
+        if res:
+            return res
 
     # Fallback to Ollama
     try:
@@ -819,38 +843,14 @@ def chat():
         "Answer questions about the project and navigation."
     )
     
-    try:
-        gemini_key = os.getenv('GEMINI_API_KEY')
-        if gemini_key:
-            try:
-                model_name = get_best_model()
-                model = genai.GenerativeModel(model_name)
-                # Use non-streaming for more stable cloud response
-                response = model.generate_content(
-                    f"System Context: {system_prompt}\n\nUser: {user_message}",
-                    safety_settings=SAFETY_SETTINGS
-                )
-                if response and hasattr(response, 'candidates') and response.candidates:
-                    # Check if the response was blocked by safety filters
-                    if response.candidates[0].finish_reason == 3: # SAFETY
-                        return jsonify({'response': "I can provide general security advice, but I'm currently staying within safe boundaries. " + get_placeholder_response(user_message)})
-                    
-                    try:
-                        if response.text:
-                            return jsonify({'response': response.text})
-                    except:
-                        # Sometimes .text fails if blocked or malformed
-                        pass
-                
-                return jsonify({'response': get_placeholder_response(user_message)})
-            except Exception as e:
-                print(f"Gemini Chat Error: {str(e)}")
-                # Do NOT show the raw error to the user, just the helpful placeholder
-                return jsonify({'response': get_placeholder_response(user_message)})
+    if gemini_key:
+        res = call_gemini_safely(f"User: {user_message}", system_prompt)
+        if res:
+            return jsonify({'response': res})
         else:
-            return jsonify({'response': "AI Key not configured. Please add GEMINI_API_KEY to Render settings."})
-    except Exception as e:
-        return jsonify({'response': f"Error: {str(e)}"})
+            return jsonify({'response': get_placeholder_response(user_message)})
+    else:
+        return jsonify({'response': "AI Key not configured."})
 
 
 
