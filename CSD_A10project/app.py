@@ -37,6 +37,35 @@ if gemini_key:
 else:
     print("Warning: GEMINI_API_KEY not found. AI features will attempt local fallback.")
 
+def get_best_model():
+    if not gemini_key:
+        return None
+    try:
+        # Dynamically find which models are allowed for this key
+        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        
+        # Priority list
+        priority = ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro']
+        for p in priority:
+            if p in models:
+                print(f"Using preferred model: {p}")
+                return p
+        
+        if models:
+            print(f"Preferred models not found. Using available: {models[0]}")
+            return models[0]
+    except Exception as e:
+        print(f"Error listing models: {e}")
+    return 'gemini-1.5-flash' # Final fallback
+
+# Configuration for safety
+SAFETY_SETTINGS = [
+    {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+    {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"},
+]
+
 # Increase timeout for slower systems
 client = Client(host='http://localhost:11434', timeout=60)
 
@@ -105,23 +134,12 @@ def get_attack_prevention(attack_type):
     # Try Gemini first if key exists
     if gemini_key:
         try:
-            # Try most compatible names in order
-            model_names = ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest', 'gemini-pro']
-            model = None
-            for name in model_names:
-                try:
-                    model = genai.GenerativeModel(name)
-                    # Test if it actually works with a very small prompt
-                    model.generate_content("ping")
-                    break 
-                except:
-                    continue
-            
-            if model:
-                full_prompt = f"{system_prompt}\n\n{user_prompt}"
-                response = model.generate_content(full_prompt)
-                if response and response.text:
-                    return response.text
+            model_name = get_best_model()
+            model = genai.GenerativeModel(model_name)
+            full_prompt = f"{system_prompt}\n\n{user_prompt}"
+            response = model.generate_content(full_prompt, safety_settings=SAFETY_SETTINGS)
+            if response and response.text:
+                return response.text
         except Exception as e:
             print(f"Gemini API Error (get_attack_prevention): {str(e)}")
 
@@ -759,29 +777,17 @@ def chat():
         # Try Gemini first
         if gemini_key:
             try:
-                # Use same robust multi-model fallback logic
-                model_names = ['gemini-1.5-flash-latest', 'gemini-1.5-pro-latest', 'gemini-pro']
-                model = None
-                for name in model_names:
-                    try:
-                        model = genai.GenerativeModel(name)
-                        # We don't want to waste tokens/time for a heavy ping here, 
-                        # so we just try to initialize and if it fails to even start a chat, we skip.
-                        chat_session = model.start_chat()
-                        break
-                    except:
-                        continue
-                
-                if model:
-                    chat_session = model.start_chat(history=[])
-                    # Combine system prompt with first message for context
-                    response = chat_session.send_message(f"System Context: {system_prompt}\n\nUser: {user_message}", stream=True)
-                    for chunk in response:
-                        if hasattr(chunk, 'text'):
-                            yield chunk.text
-                        else:
-                            yield " [Content Blocked or Empty Chunk] "
-                    return # Exit generate if Gemini succeeds
+                model_name = get_best_model()
+                model = genai.GenerativeModel(model_name)
+                chat_session = model.start_chat(history=[])
+                # Combine system prompt with first message for context
+                response = chat_session.send_message(f"System Context: {system_prompt}\n\nUser: {user_message}", stream=True, safety_settings=SAFETY_SETTINGS)
+                for chunk in response:
+                    if hasattr(chunk, 'text'):
+                        yield chunk.text
+                    else:
+                        yield " [Content Blocked or Processing...] "
+                return # Exit generate if Gemini succeeds
             except Exception as e:
                 print(f"Gemini Chat API Error: {str(e)}")
                 yield f"[Gemini Error: {str(e)}, falling back...] "
