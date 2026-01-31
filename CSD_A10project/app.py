@@ -272,6 +272,15 @@ def init_db():
             mitigation TEXT
         )
     ''')
+    
+    # Auto-insert a Demo User for presentation safety
+    # Email: admin@forensics.com | Password: admin
+    demo_user = conn.execute('SELECT * FROM users WHERE email = ?', ('admin@forensics.com',)).fetchone()
+    if not demo_user:
+        conn.execute('INSERT INTO users (name, email, password, Address) VALUES (?, ?, ?, ?)',
+                     ('Demo Admin', 'admin@forensics.com', 'admin', 'Main Control Center'))
+        print("[DB] Demo user created successfully.")
+    
     conn.commit()
     conn.close()
 
