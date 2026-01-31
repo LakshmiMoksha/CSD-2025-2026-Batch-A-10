@@ -105,7 +105,12 @@ def get_attack_prevention(attack_type):
     # Try Gemini first if key exists
     if gemini_key:
         try:
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # Try Flash 1.5 first, then fallback to Gemini Pro for maximum compatibility
+            try:
+                model = genai.GenerativeModel('gemini-1.5-flash')
+            except:
+                model = genai.GenerativeModel('gemini-pro')
+                
             full_prompt = f"{system_prompt}\n\n{user_prompt}"
             response = model.generate_content(full_prompt)
             if response and response.text:
@@ -204,6 +209,14 @@ def init_db():
             severity VARCHAR(20),
             mitigation TEXT,
             details TEXT
+        )
+    ''')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS alerts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            attack_type VARCHAR(50),
+            severity VARCHAR(20),
+            mitigation TEXT
         )
     ''')
     conn.commit()
@@ -739,7 +752,12 @@ def chat():
         # Try Gemini first
         if gemini_key:
             try:
-                model = genai.GenerativeModel('gemini-1.5-flash')
+                # Try Flash 1.5 first, then fallback to Gemini Pro
+                try:
+                    model = genai.GenerativeModel('gemini-1.5-flash')
+                except:
+                    model = genai.GenerativeModel('gemini-pro')
+                
                 chat_session = model.start_chat(history=[])
                 # Combine system prompt with first message for context
                 response = chat_session.send_message(f"System Context: {system_prompt}\n\nUser: {user_message}", stream=True)
