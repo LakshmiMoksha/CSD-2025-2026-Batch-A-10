@@ -194,23 +194,15 @@
                 return;
             }
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-            botMsgDiv.textContent = ''; // Clear the typing indicator
+            const data = await response.json();
+            botMsgDiv.textContent = data.response || "No response received.";
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                const chunk = decoder.decode(value, { stream: true });
-                botMsgDiv.textContent += chunk;
-
-                // Auto-scroll as text appears
-                const container = document.getElementById('a10-bot-messages');
-                container.scrollTop = container.scrollHeight;
-            }
+            // Auto-scroll
+            const container = document.getElementById('a10-bot-messages');
+            container.scrollTop = container.scrollHeight;
         } catch (error) {
             console.error("Chatbot Error:", error);
-            botMsgDiv.textContent = "Connection failed. Please ensure Ollama is running.";
+            botMsgDiv.textContent = "Connection failed. Limited mode active.";
         }
     }
 

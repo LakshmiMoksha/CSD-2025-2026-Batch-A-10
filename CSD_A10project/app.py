@@ -799,46 +799,28 @@ def chat():
         "Answer questions about the project and navigation."
     )
     
-    def generate():
+    try:
         gemini_key = os.getenv('GEMINI_API_KEY')
-        
-        # Try Gemini first
         if gemini_key:
             try:
                 model_name = get_best_model()
                 model = genai.GenerativeModel(model_name)
-                chat_session = model.start_chat(history=[])
-                # Combine system prompt with first message for context
-                response = chat_session.send_message(f"System Context: {system_prompt}\n\nUser: {user_message}", stream=True, safety_settings=SAFETY_SETTINGS)
-                for chunk in response:
-                    if hasattr(chunk, 'text'):
-                        yield chunk.text
-                    else:
-                        yield " [Content Blocked or Processing...] "
-                return # Exit generate if Gemini succeeds
+                # Use non-streaming for more stable cloud response
+                response = model.generate_content(
+                    f"System Context: {system_prompt}\n\nUser: {user_message}",
+                    safety_settings=SAFETY_SETTINGS
+                )
+                if response and hasattr(response, 'text') and response.text:
+                    return jsonify({'response': response.text})
+                else:
+                    return jsonify({'response': get_placeholder_response(user_message)})
             except Exception as e:
-                print(f"Gemini Chat API Error: {str(e)}")
-                # If we are on Render (detected via PORT env), don't try Ollama fallback as it's purely local
-                if os.environ.get('PORT'):
-                    yield get_placeholder_response(user_message)
-                    return
-
-        # Fallback to Ollama (Local Only)
-        try:
-            stream = client.chat(
-                model='llama3.2:1b',
-                messages=[
-                    {'role': 'system', 'content': system_prompt},
-                    {'role': 'user', 'content': user_message}
-                ],
-                stream=True
-            )
-            for chunk in stream:
-                yield chunk['message']['content']
-        except Exception as e:
-            yield f"Error: {str(e)}"
-
-    return Response(generate(), mimetype='text/plain')
+                print(f"Gemini Chat Error: {str(e)}")
+                return jsonify({'response': get_placeholder_response(user_message)})
+        else:
+            return jsonify({'response': "AI Key not configured. Please add GEMINI_API_KEY to Render settings."})
+    except Exception as e:
+        return jsonify({'response': f"Error: {str(e)}"})
 
 
 
@@ -882,7 +864,7 @@ def get_stats():
     dataset_path = CURRENT_DATASET_PATH
     print(f"[DEBUG] Fetching predictive stats for: {dataset_path}")
     
-    traffic_intensity = [40, 45, 42, 48, 50, 45, 40, 38, 42, 45] # Default fallback
+    traffic_intensity = [35, 42, 38, 45, 48, 42, 38, 35, 40, 42] 
     counts = {"Normal": 100}
 
     try:
