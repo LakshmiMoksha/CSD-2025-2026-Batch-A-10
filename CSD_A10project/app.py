@@ -87,11 +87,22 @@ def get_placeholder_response(message):
     message = message.lower()
     if 'hello' in message or 'hi' in message:
         return "Hello! I am the CyberDetect AI assistant. How can I help you today?"
+    
+    if 'dataset' in message or 'data' in message or 'wsn-ds' in message:
+        return (
+            "The system is built on the **WSN-DS (Wireless Sensor Network Data Set)** from Kaggle. "
+            "It was generated using the NS-2 simulator based on the LEACH routing protocol. "
+            "The dataset contains thousands of records categorized into five classes: "
+            "Normal traffic and four major attacks: **Blackhole, Grayhole, Flooding, and TDMA Scheduling attacks**. "
+            "It consists of 18 specific technical features such as Packet Rate, Energy Consumption, "
+            "and Transmission/Reception ratios (ADV, JOIN, SCH, and DATA)."
+        )
+
     return (
-        "I am currently operating in limited connectivity mode. "
-        "I can help you analyze the WSN-DS dataset, detect network attacks, "
-        "and generate forensic reports. Please use the 'Upload' and 'Prediction' "
-        "menus to begin your analysis."
+        "I am currently operating in expert-knowledge mode. "
+        "I can explain the WSN-DS dataset, analyze network patterns, "
+        "and suggest mitigation for Grayhole, Blackhole, Flooding, and TDMA attacks. "
+        "Please use the 'Upload' menu to process a CSV file for deep detection."
     )
 
 # Increase timeout for slower systems
