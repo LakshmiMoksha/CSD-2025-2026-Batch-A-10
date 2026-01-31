@@ -40,23 +40,40 @@ else:
 def get_best_model():
     if not gemini_key:
         return None
+    
+    # Tiered list of known working models
+    tier_lists = [
+        'models/gemini-1.5-flash', 
+        'gemini-1.5-flash',
+        'models/gemini-1.5-pro',
+        'gemini-1.5-pro',
+        'models/gemini-pro',
+        'gemini-pro'
+    ]
+    
+    # 1. Try to list models (ideal)
     try:
-        # Dynamically find which models are allowed for this key
-        models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-        
-        # Priority list
-        priority = ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro']
-        for p in priority:
-            if p in models:
-                print(f"Using preferred model: {p}")
+        remote_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
+        for p in tier_lists:
+            if p in remote_models or p.replace('models/', '') in remote_models:
+                print(f"[AI] Smart Search found: {p}")
                 return p
-        
-        if models:
-            print(f"Preferred models not found. Using available: {models[0]}")
-            return models[0]
     except Exception as e:
-        print(f"Error listing models: {e}")
-    return 'gemini-1.5-flash' # Final fallback
+        print(f"[AI] Model listing failed (expected for some keys): {e}")
+
+    # 2. Brute force check (if listing failed or returned nothing)
+    print("[AI] Falling back to brute-force model probe...")
+    for model_name in tier_lists:
+        try:
+            m = genai.GenerativeModel(model_name)
+            # Very small probe
+            m.generate_content("ping", generation_config={"max_output_tokens": 1})
+            print(f"[AI] Brute force found working model: {model_name}")
+            return model_name
+        except:
+            continue
+            
+    return 'gemini-1.5-flash' # Absolute final default
 
 # Configuration for safety
 SAFETY_SETTINGS = [
