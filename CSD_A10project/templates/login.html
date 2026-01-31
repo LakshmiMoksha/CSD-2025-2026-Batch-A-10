@@ -67,51 +67,308 @@
     <!-- Navbar End -->
 
     <!-- Login Start -->
-    <div class="container-fluid py-5" style="background-color: var(--bg-color); min-height: 100vh;">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 animate__animated animate__zoomIn">
-                    <div class="form-container">
-                        <h4 class="text-primary text-uppercase">Login</h4>
-                        <h2 class="theme-text" style="font-family: 'Outfit', sans-serif; font-weight: 800;">Welcome Back
-                        </h2>
+    <div class="auth-page">
+        <div class="auth-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <div class="container">
+            <div class="row justify-content-center align-items-center min-vh-100 py-5">
+                <div class="col-lg-5 col-md-7">
+                    <div class="auth-card glass-card animate__animated animate__fadeInUp">
+                        <!-- Header -->
+                        <div class="text-center mb-5">
+                            <div class="auth-icon mb-3">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h4 class="text-primary text-uppercase mb-2"
+                                style="letter-spacing: 2px; font-size: 0.9rem;">Secure Access</h4>
+                            <h2 class="theme-text mb-2"
+                                style="font-family: 'Orbitron', sans-serif; font-weight: 800; font-size: 2rem;">Welcome
+                                Back</h2>
+                            <p class="theme-text-muted" style="font-size: 0.95rem;">Sign in to continue to CyberDetect
+                                AI</p>
+                        </div>
+
+                        <!-- Alert Message -->
                         {% if msg %}
-                        <div class="alert alert-info mt-3"
-                            style="background: var(--glass-bg); border-color: var(--primary); color: var(--text-color);">
+                        <div class="alert alert-custom mb-4">
+                            <i class="fas fa-info-circle me-2"></i>
                             {{msg}}
                         </div>
                         {% endif %}
-                    </div>
 
-                    <form action="{{url_for('login')}}" method="post">
-                        <div class="row g-4">
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        placeholder="Your Email" required>
-                                    <label for="email">Your Email</label>
+                        <!-- Login Form -->
+                        <form action="{{url_for('login')}}" method="post">
+                            <div class="mb-4">
+                                <div class="input-group-custom">
+                                    <div class="input-icon">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control custom-input" id="email" name="email"
+                                            placeholder="Your Email" required>
+                                        <label for="email">Email Address</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="password" name="password"
-                                        placeholder="Password" required>
-                                    <label for="password">Password</label>
+
+                            <div class="mb-4">
+                                <div class="input-group-custom">
+                                    <div class="input-icon">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control custom-input" id="password"
+                                            name="password" placeholder="Password" required>
+                                        <label for="password">Password</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-12 text-center mt-5">
-                                <button class="btn btn-primary w-100 py-3" type="submit">SIGN IN</button>
-                                <p class="mt-4 text-muted">Don't have an account? <a href="{{url_for('registration')}}"
-                                        class="text-primary">Register here</a>
+
+                            <button class="btn btn-gradient w-100 py-3 mb-4" type="submit">
+                                <span>SIGN IN</span>
+                                <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+
+                            <div class="text-center">
+                                <p class="theme-text-muted mb-0">
+                                    Don't have an account?
+                                    <a href="{{url_for('registration')}}"
+                                        class="text-primary fw-bold text-decoration-none hover-glow">
+                                        Create Account
+                                    </a>
                                 </p>
                             </div>
+                        </form>
+
+                        <!-- Security Badge -->
+                        <div class="security-badge mt-4 pt-4 border-top"
+                            style="border-color: var(--glass-border) !important;">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <i class="fas fa-shield-check text-primary me-2"></i>
+                                <small class="theme-text-muted">256-bit SSL Encrypted</small>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
+
+    <style>
+        .auth-page {
+            position: relative;
+            min-height: 100vh;
+            background: var(--bg-color);
+            overflow: hidden;
+        }
+
+        .auth-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .gradient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            bottom: -10%;
+            right: -10%;
+            animation-delay: 7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: 14s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) scale(0.9);
+            }
+        }
+
+        .auth-card {
+            position: relative;
+            z-index: 1;
+            background: var(--glass-card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 12px 32px rgba(168, 85, 247, 0.5);
+            }
+        }
+
+        .input-group-custom {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .custom-input {
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding-left: 55px !important;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .custom-input:focus {
+            background: var(--input-bg);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+            color: var(--text-color);
+        }
+
+        .custom-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-floating>label {
+            padding-left: 55px;
+            color: var(--text-muted);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-gradient:hover::before {
+            left: 100%;
+        }
+
+        .alert-custom {
+            background: var(--glass-bg);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            color: var(--text-color);
+            padding: 1rem;
+        }
+
+        .hover-glow {
+            transition: all 0.3s ease;
+        }
+
+        .hover-glow:hover {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 2rem;
+            }
+
+            .auth-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
     <!-- Login End -->
     <a href="#" class="btn btn-secondary btn-lg-square rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
     <!-- Footer -->
