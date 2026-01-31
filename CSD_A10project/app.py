@@ -822,15 +822,20 @@ def chat():
                 if response and hasattr(response, 'candidates') and response.candidates:
                     # Check if the response was blocked by safety filters
                     if response.candidates[0].finish_reason == 3: # SAFETY
-                        return jsonify({'response': "I can provide general security advice, but I must maintain safety guidelines. " + get_placeholder_response(user_message)})
+                        return jsonify({'response': "I can provide general security advice, but I'm currently staying within safe boundaries. " + get_placeholder_response(user_message)})
                     
-                    if hasattr(response, 'text') and response.text:
-                        return jsonify({'response': response.text})
+                    try:
+                        if response.text:
+                            return jsonify({'response': response.text})
+                    except:
+                        # Sometimes .text fails if blocked or malformed
+                        pass
                 
                 return jsonify({'response': get_placeholder_response(user_message)})
             except Exception as e:
                 print(f"Gemini Chat Error: {str(e)}")
-                return jsonify({'response': f"Notice: {str(e)}. " + get_placeholder_response(user_message)})
+                # Do NOT show the raw error to the user, just the helpful placeholder
+                return jsonify({'response': get_placeholder_response(user_message)})
         else:
             return jsonify({'response': "AI Key not configured. Please add GEMINI_API_KEY to Render settings."})
     except Exception as e:
