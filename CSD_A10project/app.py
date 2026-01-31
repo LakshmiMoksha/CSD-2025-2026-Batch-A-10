@@ -29,11 +29,16 @@ from ollama import Client
 import google.generativeai as genai
 
 
+# AI API Configuration
+gemini_key = os.getenv('GEMINI_API_KEY')
+if gemini_key:
+    genai.configure(api_key=gemini_key)
+    print(f"Gemini AI configured successfully. Key starts with: {gemini_key[:5]}...")
+else:
+    print("Warning: GEMINI_API_KEY not found. AI features will attempt local fallback.")
+
 # Increase timeout for slower systems
 client = Client(host='http://localhost:11434', timeout=60)
-
-
-# Removal of SHAP logic as requested.
 
 def log_alert(attack_type):
     info = ATTACK_INFO.get(attack_type, {"severity": "Unknown", "mitigation": "Investigate immediately."})
@@ -100,14 +105,13 @@ def get_attack_prevention(attack_type):
     # Try Gemini first if key exists
     if gemini_key:
         try:
-            genai.configure(api_key=gemini_key)
             model = genai.GenerativeModel('gemini-1.5-flash')
             full_prompt = f"{system_prompt}\n\n{user_prompt}"
             response = model.generate_content(full_prompt)
             if response and response.text:
                 return response.text
         except Exception as e:
-            print(f"Gemini error: {e}")
+            print(f"Gemini API Error (get_attack_prevention): {str(e)}")
 
     # Fallback to Ollama
     try:
@@ -735,17 +739,19 @@ def chat():
         # Try Gemini first
         if gemini_key:
             try:
-                genai.configure(api_key=gemini_key)
                 model = genai.GenerativeModel('gemini-1.5-flash')
                 chat_session = model.start_chat(history=[])
                 # Combine system prompt with first message for context
                 response = chat_session.send_message(f"System Context: {system_prompt}\n\nUser: {user_message}", stream=True)
                 for chunk in response:
-                    yield chunk.text
+                    if hasattr(chunk, 'text'):
+                        yield chunk.text
+                    else:
+                        yield " [Content Blocked or Empty Chunk] "
                 return # Exit generate if Gemini succeeds
             except Exception as e:
-                print(f"Gemini chat error: {e}")
-                yield f"[Gemini Error, falling back...] "
+                print(f"Gemini Chat API Error: {str(e)}")
+                yield f"[Gemini Error: {str(e)}, falling back...] "
 
         # Fallback to Ollama
         try:
