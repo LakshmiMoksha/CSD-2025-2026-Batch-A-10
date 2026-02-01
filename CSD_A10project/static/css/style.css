@@ -1724,3 +1724,520 @@ select:-webkit-autofill:focus {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/******************************************************
+ * COMPREHENSIVE MOBILE RESPONSIVENESS 
+ * Media queries for optimal mobile experience
+ ******************************************************/
+
+/* ============================================
+   MOBILE LANDSCAPE & SMALL TABLETS (768px - 991px)
+   ============================================ */
+@media (max-width: 991px) {
+
+    /* Navbar */
+    .navbar {
+        padding: 15px 0;
+    }
+
+    .navbar-brand h1 {
+        font-size: 26px;
+    }
+
+    .navbar .navbar-nav .nav-link {
+        margin: 5px 0;
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+
+    .navbar-collapse {
+        background: var(--card-bg);
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 15px;
+        border: 1px solid var(--glass-border);
+    }
+
+    /* Form containers */
+    .form-container {
+        padding: 30px 25px;
+    }
+
+    .upload-container {
+        padding: 30px 25px;
+        margin: 40px auto;
+    }
+
+    /* Dashboard */
+    .container-fluid {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    .stat-card {
+        margin-bottom: 20px;
+    }
+
+    /* Charts */
+    #attackChart,
+    #trafficChart {
+        height: 250px !important;
+    }
+
+    /* Forensics */
+    .forensic-card {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .export-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    /* Hero section */
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtext {
+        font-size: 1rem;
+    }
+}
+
+/* ============================================
+   MOBILE PORTRAIT & SMALL DEVICES (max-width: 767px)
+   ============================================ */
+@media (max-width: 767px) {
+
+    /* Typography */
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+
+    .hero-subtext {
+        font-size: 0.95rem;
+    }
+
+    h2 {
+        font-size: 1.75rem !important;
+    }
+
+    h4 {
+        font-size: 1.2rem !important;
+    }
+
+    /* Navbar */
+    .navbar-brand h1 {
+        font-size: 22px;
+        letter-spacing: 1px;
+    }
+
+    .navbar {
+        padding: 12px 0;
+    }
+
+    .navbar .navbar-nav .nav-link {
+        font-size: 15px;
+        padding: 10px 15px;
+        letter-spacing: 1.2px;
+    }
+
+    /* Forms - Registration & Login */
+    .form-container,
+    .auth-card {
+        padding: 25px 20px;
+        border-radius: 15px;
+    }
+
+    .form-control,
+    .custom-input {
+        padding: 12px 15px;
+        font-size: 14px;
+        min-height: 48px;
+        /* Touch-friendly */
+    }
+
+    .form-floating>label {
+        font-size: 13px;
+        padding-left: 15px;
+    }
+
+    .input-icon {
+        left: 12px;
+        font-size: 1rem;
+    }
+
+    .custom-input {
+        padding-left: 45px !important;
+    }
+
+    .form-floating>label {
+        padding-left: 45px;
+    }
+
+    .btn-primary,
+    .btn-gradient {
+        padding: 14px 20px;
+        font-size: 15px;
+        min-height: 48px;
+    }
+
+    /* Upload page */
+    .upload-container {
+        padding: 25px 20px;
+        margin: 30px auto;
+        max-width: 95%;
+    }
+
+    .upload-container h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    /* Dashboard */
+    .stat-card {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .card-title {
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+
+    .ai-robot-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    .ai-btn {
+        padding: 10px;
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+
+    .status-indicator {
+        padding: 10px 12px;
+        margin-bottom: 10px;
+    }
+
+    .status-label {
+        font-size: 12px;
+    }
+
+    .status-badge {
+        font-size: 9px;
+        padding: 3px 10px;
+    }
+
+    .detection-card {
+        padding: 12px;
+    }
+
+    .detection-title {
+        font-size: 13px;
+    }
+
+    .detection-time {
+        font-size: 10px;
+    }
+
+    /* Charts - Make responsive */
+    canvas {
+        max-height: 220px !important;
+    }
+
+    /* Forensics */
+    .forensic-card {
+        padding: 15px;
+    }
+
+    .forensic-card h2 {
+        font-size: 1.3rem;
+    }
+
+    .forensic-card h5 {
+        font-size: 1rem;
+    }
+
+    /* Make table scrollable horizontally */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-glass {
+        min-width: 600px;
+        /* Force horizontal scroll on small screens */
+    }
+
+    .table-glass th,
+    .table-glass td {
+        padding: 10px 8px;
+        font-size: 13px;
+    }
+
+    /* Filter controls - Stack vertically */
+    .forensic-card .row.g-3 .col-md-3 {
+        margin-bottom: 10px;
+    }
+
+    /* Export buttons - Stack on mobile */
+    .d-flex.gap-2 {
+        flex-direction: column;
+        gap: 10px !important;
+    }
+
+    .export-btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 20px 0;
+        margin-top: 30px;
+    }
+
+    .footer-text {
+        font-size: 14px;
+    }
+
+    /* Login page orbs - Reduce size */
+    .gradient-orb {
+        filter: blur(60px);
+    }
+
+    .orb-1 {
+        width: 300px;
+        height: 300px;
+    }
+
+    .orb-2 {
+        width: 250px;
+        height: 250px;
+    }
+
+    .orb-3 {
+        width: 200px;
+        height: 200px;
+    }
+
+    .auth-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    /* Alert messages */
+    .alert {
+        font-size: 13px;
+        padding: 12px;
+    }
+
+    /* Security cards */
+    .security-card-info,
+    .security-card-critical,
+    .security-card-high {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .security-text-highlight {
+        font-size: 0.95rem;
+    }
+
+    .security-label {
+        font-size: 0.7rem;
+    }
+}
+
+/* ============================================
+   EXTRA SMALL MOBILE (max-width: 575px)
+   ============================================ */
+@media (max-width: 575px) {
+
+    /* Further reduce padding */
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Navbar */
+    .navbar-brand h1 {
+        font-size: 20px;
+    }
+
+    .navbar {
+        padding: 10px 0;
+    }
+
+    .navbar-collapse {
+        padding: 15px;
+    }
+
+    /* Forms */
+    .form-container,
+    .auth-card {
+        padding: 20px 15px;
+    }
+
+    .form-control,
+    .custom-input {
+        font-size: 14px;
+    }
+
+    /* Upload */
+    .upload-container {
+        padding: 20px 15px;
+        border-radius: 12px;
+    }
+
+    /* Dashboard */
+    .container-fluid.py-4 {
+        padding-top: 20px !important;
+        padding-bottom: 20px !important;
+    }
+
+    .row.g-3 {
+        gap: 12px !important;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+
+    .ai-robot-icon {
+        font-size: 42px;
+    }
+
+    /* Forensics */
+    .forensic-card h2 {
+        font-size: 1.2rem;
+    }
+
+    .forensic-card p {
+        font-size: 13px;
+    }
+
+    /* Table cells - Even smaller */
+    .table-glass th,
+    .table-glass td {
+        padding: 8px 6px;
+        font-size: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+
+    .export-btn {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    /* Typography */
+    h2 {
+        font-size: 1.5rem !important;
+    }
+
+    h4 {
+        font-size: 1.1rem !important;
+    }
+
+    .hero-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* ============================================
+   TINY SCREENS (max-width: 375px)
+   ============================================ */
+@media (max-width: 375px) {
+    .navbar-brand h1 {
+        font-size: 18px;
+    }
+
+    .form-container,
+    .auth-card,
+    .upload-container {
+        padding: 15px 12px;
+    }
+
+    .hero-title {
+        font-size: 1.5rem;
+    }
+
+    .btn-primary,
+    .btn-gradient {
+        font-size: 13px;
+        padding: 12px 15px;
+    }
+
+    .stat-card {
+        padding: 10px;
+    }
+
+    .ai-robot-icon {
+        font-size: 36px;
+    }
+
+    .ai-btn {
+        font-size: 10px;
+        padding: 8px;
+    }
+}
+
+/* ============================================
+   UTILITY CLASSES FOR MOBILE
+   ============================================ */
+
+/* Ensure all touch targets are at least 44x44px */
+@media (max-width: 767px) {
+
+    button,
+    .btn,
+    a.nav-link,
+    input[type="submit"],
+    input[type="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Make sure text is readable */
+    body {
+        font-size: 14px;
+    }
+
+    /* Prevent horizontal scroll */
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Optimize navbar toggler */
+    .navbar-toggler {
+        padding: 8px 12px;
+        font-size: 20px;
+        border: 2px solid var(--primary);
+    }
+
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.25);
+    }
+
+    /* Stack columns on mobile */
+    .row>[class*="col-"] {
+        margin-bottom: 15px;
+    }
+
+    .row>[class*="col-"]:last-child {
+        margin-bottom: 0;
+    }
+}
