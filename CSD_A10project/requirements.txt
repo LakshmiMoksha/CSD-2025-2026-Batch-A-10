@@ -10,4 +10,3 @@ ollama
 gunicorn
 python-dotenv
 google-generativeai
-psycopg2-binary
