@@ -11,6 +11,7 @@ print("A10 FORENSIC SYSTEM - SERVER RESTARTED")
 print("="*40 + "\n")
 import pandas as pd 
 import os 
+os.makedirs("/data", exist_ok=True)
 from dotenv import load_dotenv
 load_dotenv()
 import numpy as np
