@@ -6,6 +6,9 @@ import csv
 import io
 from fpdf import FPDF
 app = Flask(__name__)
+@app.route("/health")
+def health():
+    return "OK"
 print("\n" + "="*40)
 print("A10 FORENSIC SYSTEM - SERVER RESTARTED")
 print("="*40 + "\n")
